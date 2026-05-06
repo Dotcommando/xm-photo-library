@@ -1,5 +1,6 @@
 import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
+import { Router } from '@angular/router';
 
 import { IPhoto } from '../../core/models/photo.model';
 import { FavoritesStoreService } from '../../core/services/favorites-store.service';
@@ -11,15 +12,24 @@ describe('FavoritesPageComponent', () => {
   let favoritesStore: {
     favorites: ReturnType<typeof signal<IPhoto[]>>;
   };
+  let router: {
+    navigate: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
     favoritesStore = {
       favorites: signal(photos),
     };
+    router = {
+      navigate: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [FavoritesPageComponent],
-      providers: [{ provide: FavoritesStoreService, useValue: favoritesStore }],
+      providers: [
+        { provide: FavoritesStoreService, useValue: favoritesStore },
+        { provide: Router, useValue: router },
+      ],
     }).compileComponents();
   });
 
@@ -42,6 +52,16 @@ describe('FavoritesPageComponent', () => {
     );
 
     expect(favoriteIndicators.length).toBe(2);
+  });
+
+  it('should navigate to the selected photo page when a favorite photo is clicked', () => {
+    const fixture = TestBed.createComponent(FavoritesPageComponent);
+    fixture.detectChanges();
+
+    const firstCard = fixture.nativeElement.querySelector('.photo-card') as HTMLButtonElement;
+    firstCard.click();
+
+    expect(router.navigate).toHaveBeenCalledWith(['/photos', photos[0].id]);
   });
 
   it('should show an empty state when there are no favorites', () => {
