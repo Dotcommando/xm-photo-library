@@ -56,6 +56,22 @@ describe('PhotoDetailsPageComponent', () => {
     );
   });
 
+  it('should show a loader until the photo image is loaded', () => {
+    const fixture = TestBed.createComponent(PhotoDetailsPageComponent);
+    fixture.detectChanges();
+
+    const image = fixture.nativeElement.querySelector('img') as HTMLImageElement;
+
+    expect(fixture.nativeElement.querySelector('mat-progress-spinner')).toBeTruthy();
+    expect(image.classList.contains('photo-page__image--loaded')).toBe(false);
+
+    image.dispatchEvent(new Event('load'));
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('mat-progress-spinner')).toBeFalsy();
+    expect(image.classList.contains('photo-page__image--loaded')).toBe(true);
+  });
+
   it('should remove the photo from favorites and navigate back to favorites', () => {
     const fixture = TestBed.createComponent(PhotoDetailsPageComponent);
     fixture.detectChanges();

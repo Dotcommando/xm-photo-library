@@ -51,7 +51,7 @@ describe('App', () => {
     expect(links[1].classList.contains('app-header__link--active')).toBe(true);
   });
 
-  it('should highlight favorites on the single photo page', async () => {
+  it('should not highlight any header button on the single photo page', async () => {
     const fixture = TestBed.createComponent(App);
     const router = TestBed.inject(Router);
 
@@ -63,7 +63,7 @@ describe('App', () => {
     const links = Array.from(fixture.nativeElement.querySelectorAll('a')) as HTMLAnchorElement[];
 
     expect(links[0].classList.contains('app-header__link--active')).toBe(false);
-    expect(links[1].classList.contains('app-header__link--active')).toBe(true);
+    expect(links[1].classList.contains('app-header__link--active')).toBe(false);
   });
 
   it('should highlight photos only on the photos page', async () => {

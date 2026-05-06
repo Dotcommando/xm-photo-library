@@ -1,10 +1,23 @@
 <section class="photo-page">
   @if (photo(); as selectedPhoto) {
-    <img
-      class="photo-page__image"
-      [src]="selectedPhoto.fullUrl"
-      [alt]="'Photo ' + selectedPhoto.seed"
-    />
+    <div class="photo-page__stage">
+      @if (!imageLoaded()) {
+        <mat-progress-spinner
+          class="photo-page__loader"
+          mode="indeterminate"
+          diameter="56"
+          aria-label="Loading photo"
+        />
+      }
+
+      <img
+        class="photo-page__image"
+        [class.photo-page__image--loaded]="imageLoaded()"
+        [src]="selectedPhoto.fullUrl"
+        [alt]="'Photo ' + selectedPhoto.seed"
+        (load)="markImageLoaded()"
+      />
+    </div>
 
     <div class="photo-page__actions">
       <button

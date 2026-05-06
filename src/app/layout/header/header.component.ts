@@ -20,9 +20,7 @@ export class HeaderComponent {
   });
 
   protected readonly favoritesActive = computed(() => {
-    const url = this.currentUrl();
-
-    return url === '/favorites' || url.startsWith('/photos/');
+    return this.currentUrl() === '/favorites';
   });
 
   constructor() {

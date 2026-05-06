@@ -1,6 +1,7 @@
 .photo-page {
   display: grid;
-  gap: 24px;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 20px;
   width: 100%;
   min-height: calc(100vh - 224px);
 }
@@ -14,12 +15,29 @@
   border-radius: 0 !important;
 }
 
+.photo-page__stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  min-height: calc(100vh - 312px);
+  background: var(--mat-sys-surface-container-low);
+}
+
+.photo-page__loader {
+  position: absolute;
+}
+
 .photo-page__image {
   display: block;
   width: 100%;
-  max-height: calc(100vh - 300px);
+  height: calc(100vh - 312px);
   object-fit: contain;
-  background: var(--mat-sys-surface-container-low);
+  opacity: 0;
+}
+
+.photo-page__image--loaded {
+  opacity: 1;
 }
 
 .photo-page__empty {
