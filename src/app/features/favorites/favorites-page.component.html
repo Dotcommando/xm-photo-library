@@ -1,4 +1,13 @@
 <section class="page">
   <h1>Favorites</h1>
-  <p>Saved photos will be listed here.</p>
+
+  @if (favoritesStore.favorites().length > 0) {
+    <div class="favorites-grid">
+      @for (photo of favoritesStore.favorites(); track photo.id) {
+        <app-photo-card [photo]="photo" [favorite]="true" />
+      }
+    </div>
+  } @else {
+    <p class="empty-state">No favorite photos yet.</p>
+  }
 </section>

@@ -1,6 +1,6 @@
 .page {
   display: grid;
-  gap: 8px;
+  gap: 24px;
 }
 
 h1 {
@@ -9,7 +9,26 @@ h1 {
   line-height: 1.2;
 }
 
-p {
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+
+.empty-state {
   margin: 0;
   color: var(--mat-sys-on-surface-variant);
+}
+
+@media (max-width: 760px) {
+  .favorites-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+  }
+}
+
+@media (max-width: 420px) {
+  .favorites-grid {
+    grid-template-columns: 1fr;
+  }
 }
