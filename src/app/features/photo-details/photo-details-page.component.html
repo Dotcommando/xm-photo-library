@@ -1,0 +1,22 @@
+<section class="photo-page">
+  @if (photo(); as selectedPhoto) {
+    <img
+      class="photo-page__image"
+      [src]="selectedPhoto.fullUrl"
+      [alt]="'Photo ' + selectedPhoto.seed"
+    />
+
+    <div class="photo-page__actions">
+      <button
+        class="photo-page__remove"
+        mat-flat-button
+        type="button"
+        (click)="removeFromFavorites()"
+      >
+        Remove from favorites
+      </button>
+    </div>
+  } @else {
+    <p class="photo-page__empty">Photo was not found in favorites.</p>
+  }
+</section>

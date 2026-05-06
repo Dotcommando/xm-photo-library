@@ -1,0 +1,28 @@
+.photo-page {
+  display: grid;
+  gap: 24px;
+  width: 100%;
+  min-height: calc(100vh - 224px);
+}
+
+.photo-page__actions {
+  display: flex;
+  justify-content: center;
+}
+
+.photo-page__remove {
+  border-radius: 0 !important;
+}
+
+.photo-page__image {
+  display: block;
+  width: 100%;
+  max-height: calc(100vh - 300px);
+  object-fit: contain;
+  background: var(--mat-sys-surface-container-low);
+}
+
+.photo-page__empty {
+  margin: 0;
+  color: var(--mat-sys-on-surface-variant);
+}
