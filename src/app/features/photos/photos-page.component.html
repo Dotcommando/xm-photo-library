@@ -1,4 +1,15 @@
 <section class="page">
   <h1>Photos</h1>
-  <p>Random photostream will be implemented here.</p>
+
+  <div class="photos-grid">
+    @for (photo of photosStore.photos(); track photo.id) {
+      <app-photo-card [photo]="photo" />
+    }
+  </div>
+
+  @if (photosStore.loading()) {
+    <div class="photos-loader" aria-label="Loading photos">
+      <mat-progress-spinner mode="indeterminate" diameter="48" />
+    </div>
+  }
 </section>

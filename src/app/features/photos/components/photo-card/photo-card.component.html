@@ -1,0 +1,17 @@
+<article class="photo-card">
+  <img class="photo-card__image" [src]="photo().thumbnailUrl" [alt]="'Photo ' + photo().seed" />
+
+  <button
+    class="photo-card__favorite"
+    mat-icon-button
+    type="button"
+    disabled
+    aria-label="Add to favorites"
+  >
+    <svg class="photo-card__favorite-icon" viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M12 21s-7-4.35-9.45-8.64C0.56 8.88 2.62 4.5 6.62 4.5c2.08 0 3.45 1.13 4.25 2.18.22.29.44.29.66 0 .8-1.05 2.17-2.18 4.25-2.18 4 0 6.06 4.38 4.07 7.86C19 16.65 12 21 12 21Z"
+      />
+    </svg>
+  </button>
+</article>
