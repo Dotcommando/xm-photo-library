@@ -2,17 +2,47 @@ import { TestBed } from '@angular/core/testing';
 
 import { IPhoto } from '../models/photo.model';
 import { FavoritesStoreService } from './favorites-store.service';
+import { LocalStorageService } from './local-storage.service';
 
 describe('FavoritesStoreService', () => {
+  const storageKey = 'xm-photo-library-favorites';
   let service: FavoritesStoreService;
+  let localStorageService: {
+    get: ReturnType<typeof vi.fn>;
+    set: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    localStorageService = {
+      get: vi.fn().mockReturnValue(null),
+      set: vi.fn(),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [{ provide: LocalStorageService, useValue: localStorageService }],
+    });
     service = TestBed.inject(FavoritesStoreService);
   });
 
   it('should create', () => {
     expect(service).toBeTruthy();
+  });
+
+  it('should restore favorites from local storage', () => {
+    const photo = createPhoto('photo-1');
+    TestBed.resetTestingModule();
+    localStorageService = {
+      get: vi.fn().mockReturnValue([photo]),
+      set: vi.fn(),
+    };
+    TestBed.configureTestingModule({
+      providers: [{ provide: LocalStorageService, useValue: localStorageService }],
+    });
+
+    service = TestBed.inject(FavoritesStoreService);
+
+    expect(localStorageService.get).toHaveBeenCalledWith(storageKey);
+    expect(service.favorites()).toEqual([photo]);
   });
 
   it('should add favorites to the end of the list', () => {
@@ -23,6 +53,7 @@ describe('FavoritesStoreService', () => {
     service.add(secondPhoto);
 
     expect(service.favorites()).toEqual([firstPhoto, secondPhoto]);
+    expect(localStorageService.set).toHaveBeenLastCalledWith(storageKey, [firstPhoto, secondPhoto]);
   });
 
   it('should not add the same photo twice', () => {
@@ -32,6 +63,7 @@ describe('FavoritesStoreService', () => {
     service.add(photo);
 
     expect(service.favorites()).toEqual([photo]);
+    expect(localStorageService.set).toHaveBeenCalledTimes(1);
   });
 
   it('should expose favorite ids', () => {
@@ -63,6 +95,7 @@ describe('FavoritesStoreService', () => {
 
     expect(service.favorites()).toEqual([secondPhoto]);
     expect(service.isFavorite(firstPhoto.id)).toBe(false);
+    expect(localStorageService.set).toHaveBeenLastCalledWith(storageKey, [secondPhoto]);
   });
 });
 

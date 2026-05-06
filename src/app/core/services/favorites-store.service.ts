@@ -1,12 +1,17 @@
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 
 import { IPhoto } from '../models/photo.model';
+import { LocalStorageService } from './local-storage.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FavoritesStoreService {
-  private readonly favoritesState = signal<IPhoto[]>([]);
+  private readonly storageKey = 'xm-photo-library-favorites';
+  private readonly localStorageService = inject(LocalStorageService);
+  private readonly favoritesState = signal<IPhoto[]>(
+    this.localStorageService.get<IPhoto[]>(this.storageKey) ?? [],
+  );
 
   readonly favorites = this.favoritesState.asReadonly();
 
@@ -19,13 +24,11 @@ export class FavoritesStoreService {
       return;
     }
 
-    this.favoritesState.update((favorites) => [...favorites, photo]);
+    this.updateFavorites([...this.favoritesState(), photo]);
   }
 
   remove(photoId: string): void {
-    this.favoritesState.update((favorites) => {
-      return favorites.filter((photo) => photo.id !== photoId);
-    });
+    this.updateFavorites(this.favoritesState().filter((photo) => photo.id !== photoId));
   }
 
   isFavorite(photoId: string): boolean {
@@ -34,5 +37,10 @@ export class FavoritesStoreService {
 
   findById(photoId: string): IPhoto | undefined {
     return this.favoritesState().find((photo) => photo.id === photoId);
+  }
+
+  private updateFavorites(favorites: IPhoto[]): void {
+    this.favoritesState.set(favorites);
+    this.localStorageService.set(this.storageKey, favorites);
   }
 }
