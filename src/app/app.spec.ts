@@ -5,10 +5,17 @@ import { routes } from './app.routes';
 
 describe('App', () => {
   beforeEach(async () => {
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
+    vi.spyOn(window, 'requestAnimationFrame').mockReturnValue(1);
+
     await TestBed.configureTestingModule({
       imports: [App],
       providers: [provideRouter(routes)],
     }).compileComponents();
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
   it('should create the app', () => {
