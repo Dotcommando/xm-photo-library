@@ -26,9 +26,10 @@ describe('App', () => {
     );
 
     expect(links).toEqual(['Photos', 'Favorites']);
+    expect(compiled.querySelector('.app-header__title')).toBeFalsy();
   });
 
-  it('should highlight the active navigation button', async () => {
+  it('should highlight favorites on the favorites page', async () => {
     const fixture = TestBed.createComponent(App);
     const router = TestBed.inject(Router);
 
@@ -41,5 +42,35 @@ describe('App', () => {
 
     expect(links[0].classList.contains('app-header__link--active')).toBe(false);
     expect(links[1].classList.contains('app-header__link--active')).toBe(true);
+  });
+
+  it('should highlight favorites on the single photo page', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+
+    fixture.detectChanges();
+    await router.navigateByUrl('/photos/photo-1');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const links = Array.from(fixture.nativeElement.querySelectorAll('a')) as HTMLAnchorElement[];
+
+    expect(links[0].classList.contains('app-header__link--active')).toBe(false);
+    expect(links[1].classList.contains('app-header__link--active')).toBe(true);
+  });
+
+  it('should highlight photos only on the photos page', async () => {
+    const fixture = TestBed.createComponent(App);
+    const router = TestBed.inject(Router);
+
+    fixture.detectChanges();
+    await router.navigateByUrl('/');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const links = Array.from(fixture.nativeElement.querySelectorAll('a')) as HTMLAnchorElement[];
+
+    expect(links[0].classList.contains('app-header__link--active')).toBe(true);
+    expect(links[1].classList.contains('app-header__link--active')).toBe(false);
   });
 });

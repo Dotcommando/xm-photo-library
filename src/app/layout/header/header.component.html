@@ -1,17 +1,8 @@
 <mat-toolbar class="app-header">
-  <span class="app-header__title">Photo Library</span>
-
   <nav class="app-header__nav" aria-label="Primary navigation">
-    <a
-      mat-flat-button
-      routerLink="/"
-      routerLinkActive="app-header__link--active"
-      [routerLinkActiveOptions]="{ exact: true }"
-    >
-      Photos
-    </a>
+    <a mat-flat-button routerLink="/" [class.app-header__link--active]="photosActive()"> Photos </a>
 
-    <a mat-flat-button routerLink="/favorites" routerLinkActive="app-header__link--active">
+    <a mat-flat-button routerLink="/favorites" [class.app-header__link--active]="favoritesActive()">
       Favorites
     </a>
   </nav>
