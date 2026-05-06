@@ -4,6 +4,7 @@ import { TestBed } from '@angular/core/testing';
 import { IPhoto } from '../../core/models/photo.model';
 import { FavoritesStoreService } from '../../core/services/favorites-store.service';
 import { PhotosStoreService } from '../../core/services/photos-store.service';
+import { ScrollPositionService } from '../../core/services/scroll-position.service';
 import { PhotosPageComponent } from './photos-page.component';
 
 type ObserverCallback = IntersectionObserverCallback;
@@ -20,6 +21,10 @@ describe('PhotosPageComponent', () => {
   let favoritesStore: {
     favoriteIds: ReturnType<typeof signal<Set<string>>>;
     add: ReturnType<typeof vi.fn>;
+  };
+  let scrollPositionService: {
+    get: ReturnType<typeof vi.fn>;
+    save: ReturnType<typeof vi.fn>;
   };
   let observerInstances: IntersectionObserverMock[];
 
@@ -41,12 +46,17 @@ describe('PhotosPageComponent', () => {
       favoriteIds: signal(new Set<string>()),
       add: vi.fn(),
     };
+    scrollPositionService = {
+      get: vi.fn().mockReturnValue(0),
+      save: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [PhotosPageComponent],
       providers: [
         { provide: FavoritesStoreService, useValue: favoritesStore },
         { provide: PhotosStoreService, useValue: photosStore },
+        { provide: ScrollPositionService, useValue: scrollPositionService },
       ],
     }).compileComponents();
   });
@@ -109,6 +119,40 @@ describe('PhotosPageComponent', () => {
 
     expect(fixture.nativeElement.querySelector('.scroll-anchor')).toBeTruthy();
     expect(observerInstances.at(-1)?.options.rootMargin).toBe('320px');
+  });
+
+  it('should restore the saved scroll position after view init', async () => {
+    scrollPositionService.get.mockReturnValue(480);
+    const scrollTo = vi.spyOn(window, 'scrollTo').mockImplementation(() => undefined);
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      callback(0);
+
+      return 1;
+    });
+    const fixture = TestBed.createComponent(PhotosPageComponent);
+
+    fixture.detectChanges();
+    await Promise.resolve();
+
+    expect(scrollPositionService.get).toHaveBeenCalledWith('photos');
+    expect(scrollTo).toHaveBeenCalledWith({
+      top: 480,
+      left: 0,
+      behavior: 'instant',
+    });
+  });
+
+  it('should save the scroll position on destroy', () => {
+    Object.defineProperty(window, 'scrollY', {
+      configurable: true,
+      value: 360,
+    });
+    const fixture = TestBed.createComponent(PhotosPageComponent);
+    fixture.detectChanges();
+
+    fixture.destroy();
+
+    expect(scrollPositionService.save).toHaveBeenCalledWith('photos', 360);
   });
 
   it('should load the next page when the scroll anchor intersects', () => {
