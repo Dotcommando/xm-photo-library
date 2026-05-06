@@ -1,9 +1,11 @@
 import { Component, input, output } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 
 import { IPhoto } from '../../../../core/models/photo.model';
 
 @Component({
   selector: 'app-photo-card',
+  imports: [MatIconModule],
   templateUrl: './photo-card.component.html',
   styleUrl: './photo-card.component.scss',
 })

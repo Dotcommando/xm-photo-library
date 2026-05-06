@@ -39,7 +39,9 @@ describe('PhotoCardComponent', () => {
 
     expect(favoriteIndicator).toBeTruthy();
     expect(favoriteIndicator.tagName.toLowerCase()).toBe('span');
-    expect(favoriteIndicator.querySelector('svg')).toBeTruthy();
+    expect(favoriteIndicator.querySelector('mat-icon')?.textContent?.trim()).toBe(
+      'favorite_border',
+    );
   });
 
   it('should highlight the favorite indicator when the photo is favorite', () => {
@@ -49,8 +51,10 @@ describe('PhotoCardComponent', () => {
     fixture.detectChanges();
 
     const favoriteIndicator = fixture.nativeElement.querySelector('.photo-card__favorite');
+    const icon = favoriteIndicator.querySelector('mat-icon') as HTMLElement;
 
     expect(favoriteIndicator.classList.contains('photo-card__favorite--active')).toBe(true);
+    expect(icon.textContent?.trim()).toBe('favorite');
   });
 
   it('should emit the selected photo when the card is clicked', () => {
