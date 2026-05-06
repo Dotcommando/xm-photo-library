@@ -2,6 +2,7 @@ import { signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 
 import { IPhoto } from '../../core/models/photo.model';
+import { FavoritesStoreService } from '../../core/services/favorites-store.service';
 import { PhotosStoreService } from '../../core/services/photos-store.service';
 import { PhotosPageComponent } from './photos-page.component';
 
@@ -15,6 +16,10 @@ describe('PhotosPageComponent', () => {
     photos: ReturnType<typeof signal<IPhoto[]>>;
     loading: ReturnType<typeof signal<boolean>>;
     loadNextPage: ReturnType<typeof vi.fn>;
+  };
+  let favoritesStore: {
+    favoriteIds: ReturnType<typeof signal<Set<string>>>;
+    add: ReturnType<typeof vi.fn>;
   };
   let observerInstances: IntersectionObserverMock[];
 
@@ -32,10 +37,17 @@ describe('PhotosPageComponent', () => {
       loading: signal(false),
       loadNextPage: vi.fn(),
     };
+    favoritesStore = {
+      favoriteIds: signal(new Set<string>()),
+      add: vi.fn(),
+    };
 
     await TestBed.configureTestingModule({
       imports: [PhotosPageComponent],
-      providers: [{ provide: PhotosStoreService, useValue: photosStore }],
+      providers: [
+        { provide: FavoritesStoreService, useValue: favoritesStore },
+        { provide: PhotosStoreService, useValue: photosStore },
+      ],
     }).compileComponents();
   });
 
@@ -51,6 +63,26 @@ describe('PhotosPageComponent', () => {
 
     expect(photosStore.loadNextPage).not.toHaveBeenCalled();
     expect(fixture.nativeElement.querySelectorAll('app-photo-card').length).toBe(3);
+  });
+
+  it('should add a photo to favorites when the photo card is clicked', () => {
+    const fixture = TestBed.createComponent(PhotosPageComponent);
+    fixture.detectChanges();
+
+    const firstCard = fixture.nativeElement.querySelector('.photo-card') as HTMLButtonElement;
+    firstCard.click();
+
+    expect(favoritesStore.add).toHaveBeenCalledWith(photos[0]);
+  });
+
+  it('should pass favorite state to photo cards', () => {
+    favoritesStore.favoriteIds.set(new Set([photos[0].id]));
+    const fixture = TestBed.createComponent(PhotosPageComponent);
+    fixture.detectChanges();
+
+    const firstFavoriteIndicator = fixture.nativeElement.querySelector('.photo-card__favorite');
+
+    expect(firstFavoriteIndicator.classList.contains('photo-card__favorite--active')).toBe(true);
   });
 
   it('should load photos when the store is empty', () => {

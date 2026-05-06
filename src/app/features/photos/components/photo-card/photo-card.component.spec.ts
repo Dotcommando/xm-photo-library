@@ -28,17 +28,41 @@ describe('PhotoCardComponent', () => {
     expect(image.getAttribute('alt')).toBe(`Photo ${photo.seed}`);
   });
 
-  it('should render a disabled favorite icon', () => {
+  it('should render the favorite indicator', () => {
     const fixture = TestBed.createComponent(PhotoCardComponent);
     fixture.componentRef.setInput('photo', photo);
     fixture.detectChanges();
 
-    const favoriteButton = fixture.nativeElement.querySelector(
+    const favoriteIndicator = fixture.nativeElement.querySelector(
       '.photo-card__favorite',
-    ) as HTMLButtonElement;
+    ) as HTMLElement;
 
-    expect(favoriteButton).toBeTruthy();
-    expect(favoriteButton.disabled).toBe(true);
-    expect(favoriteButton.querySelector('svg')).toBeTruthy();
+    expect(favoriteIndicator).toBeTruthy();
+    expect(favoriteIndicator.tagName.toLowerCase()).toBe('span');
+    expect(favoriteIndicator.querySelector('svg')).toBeTruthy();
+  });
+
+  it('should highlight the favorite indicator when the photo is favorite', () => {
+    const fixture = TestBed.createComponent(PhotoCardComponent);
+    fixture.componentRef.setInput('photo', photo);
+    fixture.componentRef.setInput('favorite', true);
+    fixture.detectChanges();
+
+    const favoriteIndicator = fixture.nativeElement.querySelector('.photo-card__favorite');
+
+    expect(favoriteIndicator.classList.contains('photo-card__favorite--active')).toBe(true);
+  });
+
+  it('should emit the selected photo when the card is clicked', () => {
+    const fixture = TestBed.createComponent(PhotoCardComponent);
+    const selected = vi.fn();
+    fixture.componentRef.setInput('photo', photo);
+    fixture.componentInstance.photoSelected.subscribe(selected);
+    fixture.detectChanges();
+
+    const card = fixture.nativeElement.querySelector('.photo-card') as HTMLButtonElement;
+    card.click();
+
+    expect(selected).toHaveBeenCalledWith(photo);
   });
 });

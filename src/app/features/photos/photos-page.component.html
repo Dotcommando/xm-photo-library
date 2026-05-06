@@ -3,7 +3,11 @@
 
   <div class="photos-grid">
     @for (photo of photosStore.photos(); track photo.id) {
-      <app-photo-card [photo]="photo" />
+      <app-photo-card
+        [photo]="photo"
+        [favorite]="favoriteIds().has(photo.id)"
+        (photoSelected)="addPhotoToFavorites($event)"
+      />
     }
   </div>
 
