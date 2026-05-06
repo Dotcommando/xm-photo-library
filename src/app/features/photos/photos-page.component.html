@@ -9,7 +9,15 @@
 
   @if (photosStore.loading()) {
     <div class="photos-loader" aria-label="Loading photos">
-      <mat-progress-spinner mode="indeterminate" diameter="48" />
+      <mat-progress-spinner mode="indeterminate" diameter="56" />
     </div>
   }
+
+  <div
+    class="scroll-anchor"
+    appInfiniteScroll
+    [appInfiniteScrollDisabled]="photosStore.loading()"
+    appInfiniteScrollRootMargin="320px"
+    (appInfiniteScrollReached)="loadMorePhotos()"
+  ></div>
 </section>
